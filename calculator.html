@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculator</title>
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:Poppins,Arial; }
+
+/* ===== BODY ===== */
+body {
+  min-height: 100vh;
+  background: linear-gradient(270deg, #667eea, #764ba2, #43cea2, #185a9d);
+  background-size: 800% 800%;
+  animation: bgMove 12s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+/* ===== PAGE WRAPPER ===== */
+.page-wrapper{
+  min-height:calc(100vh - 80px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+/* ===== MOBILE CENTER ONLY ===== */
+@media(max-width:768px){
+  .page-wrapper{
+    min-height:calc(100vh - 70px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
+
+  .container,
+  .quiz-box,
+  .stopwatch-container,
+  .todo-container,
+  .start-screen,
+  .calculator{
+    margin:0 !important;
+  }
+}
+
+/* ===== NAVBAR ===== */
+nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: linear-gradient(90deg,#667eea,#764ba2);
+  display: flex;
+  justify-content: space-between;
+  align-items:center;
+  padding: 15px 40px;
+  z-index: 1000;
+  transition: 0.3s;
+}
+
+nav.scrolled { background:#111; }
+nav h2 { color:white; }
+
+nav ul {
+  display:flex;
+  list-style:none;
+  gap:20px;
+}
+
+nav ul li a {
+  color:white;
+  text-decoration:none;
+  padding:6px 12px;
+  border-radius:5px;
+}
+
+nav ul li a:hover {
+  background:white;
+  color:#764ba2;
+}
+
+/* ===== HAMBURGER ===== */
+.menu-toggle{
+  display:none;
+  font-size:26px;
+  color:white;
+  cursor:pointer;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(15px);
+  width: 100%;
+  max-width: 480px;
+  margin: auto;
+  margin-top: 150px;
+  padding: 30px;
+  border-radius: 25px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+  text-align: center;
+  color: white;
+}
+
+/* ===== CALCULATOR ===== */
+.calculator {
+  background: linear-gradient(#cbb89d, #b7a287);
+  padding: 15px;
+  border-radius: 14px;
+  width: 420px;
+  max-width:100%;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+}
+
+.display-box {
+  background: #9fb2a5;
+  padding: 6px;
+  border-radius: 6px;
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
+}
+
+#display {
+  width: 100%;
+  height: 60px;
+  background: linear-gradient(#cfe3d6, #b5cdbf);
+  border: none;
+  font-size: 53px;
+  text-align: right;
+  padding: 10px;
+}
+
+.keys {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+button {
+  height: 48px;
+  border: none;
+  border-radius: 6px;
+  width: 100%;
+  background: #444;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: inset 0 -3px rgba(0,0,0,0.35);
+}
+
+button:active { transform: scale(0.96); }
+
+.op { background: #111; }
+.eq { background: #000; }
+.ac { background: #ff6a00; font-weight: bold; }
+
+.tall {
+  grid-row: span 2;
+  height: 104px;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width:768px){
+
+  nav{
+    padding:12px 20px;
+  }
+
+  .menu-toggle{
+    display:block;
+    position:absolute;
+    right:20px;
+    top:15px;
+  }
+
+  nav ul{
+    position:absolute;
+    top:60px;
+    left:0;
+    width:100%;
+    background:#111;
+    flex-direction:column;
+    align-items:center;
+    max-height:0;
+    overflow:hidden;
+    transition:0.4s;
+  }
+
+  nav ul.active{
+    max-height:400px;
+  }
+
+  nav ul li{
+    width:100%;
+    text-align:center;
+    padding:10px 0;
+  }
+
+  nav ul li a{
+    display:block;
+    width:100%;
+  }
+
+  .container{
+    margin-top:120px;
+    padding:20px;
+  }
+
+  #display{
+    font-size:38px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<nav id="navbar">
+  <h2>WebTasks</h2>
+
+  <!-- Hamburger -->
+  <div class="menu-toggle" id="menu-toggle">☰</div>
+
+  <ul id="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="stop-watch.html">Stopwatch</a></li>
+    <li><a href="calculator.html">Calculator</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="tictactoe.html">Tic Tac Toe</a></li>
+    <li><a href="todo.html">Todo</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+<div class="calculator">
+  <div class="display-box">
+    <input id="display" value="" readonly>
+  </div>
+
+  <div class="keys">
+    <button onclick="gt()">GT</button>
+    <button onclick="mrc()">MRC</button>
+    <button onclick="mMinus()">M−</button>
+    <button onclick="mPlus()">M+</button>
+    <button style="font-size: 10px;" onclick="checkBack()">CHECK<br>←</button>
+    <button style="font-size: 10px;" onclick="checkForward()">CHECK<br>→</button>
+
+    <button onclick="sqrtCalc()">√</button>
+    <button onclick="press('7')">7</button>
+    <button onclick="press('8')">8</button>
+    <button onclick="press('9')">9</button>
+    <button style="font-size: 9px;" onclick="correct()">CORRECT<br>00→0</button>
+    <button style="font-size: 10px;" onclick="autoReplay()">AUTO<br>REPLAY</button>
+
+    <button onclick="percent()">%</button>
+    <button onclick="press('4')">4</button>
+    <button onclick="press('5')">5</button>
+    <button onclick="press('6')">6</button>
+    <button onclick="press('*')" class="op">×</button>
+    <button style="font-size: 20px;" onclick="press('/')" class="op">÷</button>
+
+    <button onclick="ce()">CE</button>
+    <button onclick="press('1')">1</button>
+    <button onclick="press('2')">2</button>
+    <button onclick="press('3')">3</button>
+    <button onclick="press('+')" class="op tall">+</button>
+    <button onclick="press('-')" class="op">−</button>
+
+    <button onclick="ac()" class="ac">AC</button>
+    <button onclick="press('0')">0</button>
+    <button onclick="press('00')">00</button>
+    <button onclick="press('.')">.</button>
+    <button onclick="calculate()" class="eq">=</button>
+  </div>
+</div>
+</div>
+
+<script>
+window.addEventListener("scroll", () => {
+  document.getElementById("navbar")
+    .classList.toggle("scrolled", window.scrollY > 50);
+});
+
+const toggle = document.getElementById("menu-toggle");
+const links = document.getElementById("nav-links");
+toggle.addEventListener("click", ()=> links.classList.toggle("active"));
+
+const display = document.getElementById("display");
+let started=false, memory=0, grandTotal=0, history=[], hIndex=-1;
+
+function ac(){display.value="0"; started=true;}
+function press(val){
+ if(!started) return;
+ if(display.value==="0" && val==="0") return;
+ if(display.value==="0" && "123456789".includes(val)){display.value=val; return;}
+ if(display.value.length>=12) return;
+ display.value+=val;
+}
+function ce(){ if(!started) return; display.value=display.value.length>1?display.value.slice(0,-1):"0"; }
+function calculate(){
+ if(!started) return;
+ try{
+  const res=eval(display.value);
+  grandTotal+=res;
+  history.push(display.value+" = "+res);
+  hIndex=history.length;
+  display.value=String(res).slice(0,12);
+ }catch{display.value="Error";}
+}
+function mPlus(){memory+=Number(display.value);}
+function mMinus(){memory-=Number(display.value);}
+function mrc(){display.value=memory.toString().slice(0,12);}
+function gt(){display.value=grandTotal.toString().slice(0,12);}
+function percent(){display.value=(Number(display.value)/100).toString().slice(0,12);}
+function sqrtCalc(){display.value=Math.sqrt(Number(display.value)).toString().slice(0,12);}
+function correct(){display.value=display.value.replace(/00/g,"0");}
+function checkBack(){if(hIndex>0) display.value=history[--hIndex];}
+function checkForward(){if(hIndex<history.length-1) display.value=history[++hIndex];}
+function autoReplay(){
+ let i=0;if(!history.length) return;
+ const r=setInterval(()=>{display.value=history[i++]; if(i>=history.length) clearInterval(r);},700);
+}
+</script>
+</body>
+</html>

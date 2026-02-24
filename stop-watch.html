@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stopwatch</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,Arial}
+
+/* ===== BODY ===== */
+body{
+  min-height:100vh;
+  background:linear-gradient(270deg,#667eea,#764ba2,#43cea2,#185a9d);
+  background-size:800% 800%;
+  animation:bgMove 12s ease infinite;
+  padding-top:90px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+@keyframes bgMove{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+/* ===== PAGE WRAPPER ===== */
+.page-wrapper{
+  min-height:calc(100vh - 80px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+/* ===== MOBILE CENTER ONLY ===== */
+@media(max-width:768px){
+  .page-wrapper{
+    min-height:calc(100vh - 70px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
+
+  .container,
+  .quiz-box,
+  .stopwatch-container,
+  .todo-container,
+  .start-screen,
+  .calculator{
+    margin:0 !important;
+  }
+}
+
+/* ===== NAVBAR ===== */
+nav{
+  position:fixed;
+  top:0;
+  width:100%;
+  background:linear-gradient(90deg,#667eea,#764ba2);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 40px;
+  z-index:1000;
+}
+
+nav h2{color:white}
+
+nav ul{
+  display:flex;
+  list-style:none;
+  gap:20px;
+}
+
+nav ul li a{
+  color:white;
+  text-decoration:none;
+  padding:6px 12px;
+  border-radius:5px;
+}
+
+nav ul li a:hover{
+  background:white;
+  color:#764ba2;
+}
+
+/* ===== HAMBURGER ===== */
+.menu-toggle{
+  display:none;
+  font-size:26px;
+  color:white;
+  cursor:pointer;
+}
+
+/* ===== STOPWATCH ===== */
+.stopwatch-container{
+  background:rgba(255,255,255,0.25);
+  backdrop-filter:blur(15px);
+  width:90%;
+  max-width:400px;
+  margin:auto;
+  padding:30px;
+  border-radius:25px;
+  box-shadow:0 30px 60px rgba(0,0,0,0.35);
+  text-align:center;
+  color:white;
+}
+
+#time{
+  font-size:50px;
+  margin:20px 0;
+}
+
+.buttons{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+button{
+  padding:10px 20px;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+  font-size:15px;
+}
+
+button:hover{transform:scale(1.05)}
+
+#laps{
+  list-style:none;
+  margin-top:20px;
+  max-height:150px;
+  overflow-y:auto;
+}
+
+#laps li{
+  background:rgba(255,255,255,0.8);
+  color:#333;
+  padding:8px;
+  border-radius:10px;
+  margin-bottom:8px;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width:768px){
+
+  nav{padding:12px 20px}
+
+  .menu-toggle{
+    display:block;
+    position:absolute;
+    right:20px;
+    top:15px;
+  }
+
+  nav ul{
+    position:absolute;
+    top:60px;
+    left:0;
+    width:100%;
+    background:#111;
+    flex-direction:column;
+    align-items:center;
+    max-height:0;
+    overflow:hidden;
+    transition:0.4s;
+  }
+
+  nav ul.active{max-height:400px}
+
+  nav ul li{
+    width:100%;
+    text-align:center;
+    padding:10px 0;
+  }
+
+  nav ul li a{display:block;width:100%}
+
+  .stopwatch-container{padding:20px}
+
+  #time{font-size:38px}
+}
+</style>
+</head>
+
+<body>
+
+<nav id="navbar">
+  <h2>WebTasks</h2>
+
+  <div class="menu-toggle" id="menu-toggle">☰</div>
+
+  <ul id="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="stop-watch.html">Stopwatch</a></li>
+    <li><a href="calculator.html">Calculator</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="tictactoe.html">Tic Tac Toe</a></li>
+    <li><a href="todo.html">Todo</a></li>
+  </ul>
+</nav>
+
+<div class="stopwatch-container">
+  <h1>⏱ Stopwatch</h1>
+  <div id="time">00:00:00</div>
+
+  <div class="buttons">
+    <button onclick="start()">Start</button>
+    <button onclick="pause()">Pause</button>
+    <button onclick="reset()">Reset</button>
+    <button onclick="lap()">Lap</button>
+  </div>
+
+  <ul id="laps"></ul>
+</div>
+
+<script>
+const toggle=document.getElementById("menu-toggle");
+const links=document.getElementById("nav-links");
+toggle.addEventListener("click",()=>links.classList.toggle("active"));
+
+let ms=0,sec=0,min=0,timer;
+
+function update(){
+ms++;
+if(ms==100){sec++;ms=0;}
+if(sec==60){min++;sec=0;}
+time.innerText=`${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}:${String(ms).padStart(2,'0')}`;
+}
+
+function start(){if(!timer)timer=setInterval(update,10);}
+function pause(){clearInterval(timer);timer=null;}
+function reset(){pause();ms=sec=min=0;time.innerText="00:00:00";laps.innerHTML="";}
+function lap(){laps.innerHTML+=`<li>${time.innerText}</li>`;}
+</script>
+
+</body>
+</html>

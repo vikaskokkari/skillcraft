@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GK Quiz</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,Arial}
+
+/* ===== BODY ===== */
+body{
+  min-height:100vh;
+  background:linear-gradient(270deg,#667eea,#764ba2,#43cea2,#185a9d);
+  background-size:800% 800%;
+  animation:bgMove 12s ease infinite;
+  padding-top:90px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+@keyframes bgMove{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+/* ===== PAGE WRAPPER ===== */
+.page-wrapper{
+  min-height:calc(100vh - 80px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+/* ===== MOBILE CENTER ONLY ===== */
+@media(max-width:768px){
+  .page-wrapper{
+    min-height:calc(100vh - 70px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
+
+  .container,
+  .quiz-box,
+  .stopwatch-container,
+  .todo-container,
+  .start-screen,
+  .calculator{
+    margin:0 !important;
+  }
+}
+
+/* ===== NAVBAR ===== */
+nav{
+  position:fixed;
+  top:0;
+  width:100%;
+  background:linear-gradient(90deg,#667eea,#764ba2);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 40px;
+  z-index:1000;
+}
+
+nav h2{color:white}
+
+nav ul{
+  display:flex;
+  list-style:none;
+  gap:20px;
+}
+
+nav ul li a{
+  color:white;
+  text-decoration:none;
+  padding:6px 12px;
+  border-radius:5px;
+}
+
+nav ul li a:hover{
+  background:white;
+  color:#764ba2;
+}
+
+/* ===== HAMBURGER ===== */
+.menu-toggle{
+  display:none;
+  font-size:26px;
+  color:white;
+  cursor:pointer;
+}
+
+/* ===== QUIZ BOX ===== */
+.quiz-box{
+  background:rgba(255,255,255,0.25);
+  backdrop-filter:blur(15px);
+  width:90%;
+  max-width:500px;
+  padding:30px;
+  border-radius:25px;
+  box-shadow:0 30px 60px rgba(0,0,0,0.35);
+  text-align:center;
+  color:white;
+}
+
+.quiz-box img{
+  width:100%;
+  border-radius:15px;
+  margin:20px 0;
+}
+
+.quiz-box button{
+  padding:12px 28px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+  cursor:pointer;
+  font-size:16px;
+}
+
+.quiz-box button:hover{transform:scale(1.05)}
+
+#question{margin:20px 0}
+
+#options button{
+  width:100%;
+  margin:8px 0;
+  background:rgba(255,255,255,0.9);
+  color:#333;
+}
+
+.correct{background:#4caf50!important;color:white}
+.wrong{background:#e53935!important;color:white}
+
+#nextBtn{display:none;margin-top:15px}
+.hidden{display:none}
+
+/* ===== MOBILE ===== */
+@media (max-width:768px){
+
+  nav{padding:12px 20px}
+
+  .menu-toggle{
+    display:block;
+    position:absolute;
+    right:20px;
+    top:15px;
+  }
+
+  nav ul{
+    position:absolute;
+    top:60px;
+    left:0;
+    width:100%;
+    background:#111;
+    flex-direction:column;
+    align-items:center;
+    max-height:0;
+    overflow:hidden;
+    transition:0.4s;
+  }
+
+  nav ul.active{max-height:400px}
+
+  nav ul li{
+    width:100%;
+    text-align:center;
+    padding:10px 0;
+  }
+
+  nav ul li a{display:block;width:100%}
+
+  .quiz-box{padding:20px}
+}
+</style>
+</head>
+
+<body>
+
+<nav id="navbar">
+  <h2>WebTasks</h2>
+
+  <!-- Hamburger -->
+  <div class="menu-toggle" id="menu-toggle">☰</div>
+
+  <ul id="nav-links">
+<li><a href="index.html">Home</a></li>
+    <li><a href="stop-watch.html">Stopwatch</a></li>
+    <li><a href="calculator.html">Calculator</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="tictactoe.html">Tic Tac Toe</a></li>
+    <li><a href="todo.html">Todo</a></li>
+  </ul>
+</nav>
+
+<div class="quiz-box">
+
+<div id="startScreen">
+  <h1>🌍 General Knowledge Quiz</h1>
+  <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b">
+  <button onclick="startQuiz()">Start Quiz</button>
+</div>
+
+<div id="quizContainer" class="hidden">
+  <h2 id="question"></h2>
+  <div id="options"></div>
+  <button id="nextBtn" onclick="nextQuestion()">Next</button>
+  <div id="result" class="hidden"></div>
+  <button id="retryBtn" class="hidden" onclick="restartQuiz()">Retry Quiz</button>
+</div>
+
+</div>
+
+<script>
+const toggle=document.getElementById("menu-toggle");
+const links=document.getElementById("nav-links");
+toggle.addEventListener("click",()=>links.classList.toggle("active"));
+
+const questions=[
+{q:"Capital of India?",options:["Mumbai","Delhi","Kolkata","Chennai"],answer:1},
+{q:"Red Planet?",options:["Earth","Mars","Venus","Jupiter"],answer:1},
+{q:"Father of Nation?",options:["Nehru","Gandhi","Bose","Bhagat"],answer:1},
+{q:"Largest Ocean?",options:["Indian","Atlantic","Pacific","Arctic"],answer:2},
+{q:"National Animal?",options:["Elephant","Lion","Tiger","Leopard"],answer:2},
+{q:"Plants absorb?",options:["Oxygen","CO2","Nitrogen","Hydrogen"],answer:1},
+{q:"Continents?",options:["5","6","7","8"],answer:2},
+{q:"Light bulb inventor?",options:["Newton","Edison","Tesla","Einstein"],answer:1},
+{q:"Longest river?",options:["Amazon","Ganga","Nile","Yangtze"],answer:2},
+{q:"Japan currency?",options:["Won","Yuan","Yen","Dollar"],answer:2}
+];
+
+let index=0,score=0,answered=false;
+const questionEl=document.getElementById("question");
+const optionsEl=document.getElementById("options");
+const nextBtn=document.getElementById("nextBtn");
+const resultEl=document.getElementById("result");
+
+function startQuiz(){
+startScreen.classList.add("hidden");
+quizContainer.classList.remove("hidden");
+loadQuestion();
+}
+
+function loadQuestion(){
+answered=false;
+nextBtn.style.display="none";
+optionsEl.innerHTML="";
+const q=questions[index];
+questionEl.innerText=`Q${index+1}. ${q.q}`;
+q.options.forEach((opt,i)=>{
+const btn=document.createElement("button");
+btn.innerText=opt;
+btn.onclick=()=>checkAnswer(i,btn);
+optionsEl.appendChild(btn);
+});
+}
+
+function checkAnswer(i){
+if(answered)return;
+answered=true;
+const correct=questions[index].answer;
+[...optionsEl.children].forEach((b,j)=>{
+if(j===correct)b.classList.add("correct");
+if(j===i&&i!==correct)b.classList.add("wrong");
+b.disabled=true;
+});
+if(i===correct)score++;
+nextBtn.style.display="inline-block";
+}
+
+function nextQuestion(){index<questions.length-1?(index++,loadQuestion()):showResult();}
+
+function showResult(){
+questionEl.classList.add("hidden");
+optionsEl.classList.add("hidden");
+nextBtn.style.display="none";
+resultEl.classList.remove("hidden");
+retryBtn.classList.remove("hidden");
+resultEl.innerHTML=`🎉 Score: ${score}/${questions.length}`;
+}
+
+function restartQuiz(){
+index=score=0;
+questionEl.classList.remove("hidden");
+optionsEl.classList.remove("hidden");
+resultEl.classList.add("hidden");
+retryBtn.classList.add("hidden");
+loadQuestion();
+}
+</script>
+
+</body>
+</html>

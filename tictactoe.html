@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tic Tac Toe</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,Arial}
+
+body{
+  min-height:100vh;
+  background:linear-gradient(270deg,#667eea,#764ba2,#43cea2,#185a9d);
+  background-size:800% 800%;
+  animation:bgMove 12s ease infinite;
+  padding-top:90px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+@keyframes bgMove{
+0%{background-position:0% 50%}
+50%{background-position:100% 50%}
+100%{background-position:0% 50%}
+}
+
+nav{
+position:fixed;top:0;width:100%;
+background:linear-gradient(90deg,#667eea,#764ba2);
+display:flex;justify-content:space-between;
+align-items:center;padding:15px 40px;z-index:1000;
+}
+nav h2{color:white}
+nav ul{display:flex;list-style:none;gap:20px}
+nav ul li a{color:white;text-decoration:none;padding:6px 12px;border-radius:5px}
+nav ul li a:hover{background:white;color:#764ba2}
+
+.menu-toggle{display:none;font-size:26px;color:white;cursor:pointer}
+
+.start-screen{
+background:rgba(255,255,255,0.25);
+backdrop-filter:blur(15px);
+width:90%;max-width:420px;padding:30px;
+border-radius:25px;box-shadow:0 30px 60px rgba(0,0,0,0.35);
+text-align:center;color:white;
+}
+.start-screen img{width:80%;border-radius:15px;margin:15px 0;height:260px}
+
+.mode button,#names button,.restart,.change{
+margin-top:10px;padding:10px 20px;border:none;border-radius:10px;
+cursor:pointer;background:#667eea;color:white;font-size:16px;
+}
+
+#names input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc}
+
+.hidden{display:none}
+.game{text-align:center}
+
+.board{
+margin:20px auto;
+display:grid;
+grid-template-columns:repeat(3,100px);
+gap:10px;
+}
+
+.cell{
+width:100px;height:100px;background:white;color:#764ba2;
+font-size:40px;display:flex;justify-content:center;align-items:center;
+cursor:pointer;border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+@media(max-width:768px){
+.menu-toggle{display:block;position:absolute;right:20px;top:15px}
+nav ul{position:absolute;top:60px;left:0;width:100%;
+background:#111;flex-direction:column;align-items:center;
+max-height:0;overflow:hidden;transition:.4s;}
+nav ul.active{max-height:400px}
+nav ul li{width:100%;text-align:center;padding:10px 0}
+nav ul li a{display:block;width:100%}
+
+.board{grid-template-columns:repeat(3,80px)}
+.cell{width:80px;height:80px;font-size:32px}
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+<h2>WebTasks</h2>
+<div class="menu-toggle" id="menu-toggle">☰</div>
+<ul id="nav-links">
+<li><a href="index.html">Home</a></li>
+    <li><a href="stop-watch.html">Stopwatch</a></li>
+    <li><a href="calculator.html">Calculator</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="tictactoe.html">Tic Tac Toe</a></li>
+    <li><a href="todo.html">Todo</a></li>
+</ul>
+</nav>
+
+<div class="start-screen" id="startScreen">
+<h1>Tic Tac Toe</h1>
+<img src="https://snake-game.io/data/image/game/tic-tac-toe.jpg">
+
+<div class="mode">
+<button onclick="selectMode('computer')">Play vs Computer</button>
+<button onclick="selectMode('player')">2 Player</button>
+</div>
+
+<div id="names" class="hidden">
+<input id="p1" placeholder="Player 1 Name">
+<input id="p2" placeholder="Player 2 / Computer">
+<button onclick="startGame()">Start Game</button>
+</div>
+</div>
+
+<div class="game hidden" id="game">
+<h2 id="status"></h2>
+
+<div class="board">
+<div class="cell" onclick="play(this,0)"></div>
+<div class="cell" onclick="play(this,1)"></div>
+<div class="cell" onclick="play(this,2)"></div>
+<div class="cell" onclick="play(this,3)"></div>
+<div class="cell" onclick="play(this,4)"></div>
+<div class="cell" onclick="play(this,5)"></div>
+<div class="cell" onclick="play(this,6)"></div>
+<div class="cell" onclick="play(this,7)"></div>
+<div class="cell" onclick="play(this,8)"></div>
+</div>
+
+<button class="restart" onclick="restart()">Restart</button>
+<button class="change" onclick="changeNames()">New Game</button>
+</div>
+
+<script>
+/* Navbar toggle */
+const toggle=document.getElementById("menu-toggle");
+const links=document.getElementById("nav-links");
+toggle.addEventListener("click",()=>links.classList.toggle("active"));
+
+/* ⭐ FIXED DOM REFERENCES */
+const statusEl=document.getElementById("status");
+const names=document.getElementById("names");
+const p1=document.getElementById("p1");
+const p2=document.getElementById("p2");
+const startScreen=document.getElementById("startScreen");
+const game=document.getElementById("game");
+
+let board=["","","","","","","","",""];
+let current="X",mode="",players={},gameOver=false;
+
+const winPatterns=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+function selectMode(m){
+mode=m;
+names.classList.remove("hidden");
+if(m==="computer"){p2.value="Computer";p2.disabled=true;}
+}
+
+function startGame(){
+players.X=p1.value||"Player 1";
+players.O=p2.value||"Player 2";
+startScreen.classList.add("hidden");
+game.classList.remove("hidden");
+updateStatus();
+}
+
+function play(cell,i){
+if(board[i]||gameOver)return;
+
+board[i]=current;
+cell.innerText=current;
+
+if(checkWin()){
+statusEl.innerText=players[current]+" Wins 🎉";
+gameOver=true;
+return;
+}
+
+if(!board.includes("")){
+statusEl.innerText="Draw 😐";
+gameOver=true;
+return;
+}
+
+current=current==="X"?"O":"X";
+updateStatus();
+
+if(mode==="computer"&&current==="O")setTimeout(computerMove,500);
+}
+
+function computerMove(){
+let empty=board.map((v,i)=>v===""?i:null).filter(v=>v!==null);
+let move=empty[Math.floor(Math.random()*empty.length)];
+play(document.getElementsByClassName("cell")[move],move);
+}
+
+function checkWin(){
+return winPatterns.some(p=>p.every(i=>board[i]===current));
+}
+
+function updateStatus(){
+statusEl.innerText=players[current]+"'s Turn ("+current+")";
+}
+
+function restart(){
+board=["","","","","","","","",""];
+current="X";
+gameOver=false;
+document.querySelectorAll(".cell").forEach(c=>c.innerText="");
+updateStatus();
+}
+
+function changeNames(){
+restart();
+game.classList.add("hidden");
+startScreen.classList.remove("hidden");
+names.classList.remove("hidden");
+p1.value="";
+p2.value="";
+p2.disabled=false;
+}
+</script>
+
+</body>
+</html>
